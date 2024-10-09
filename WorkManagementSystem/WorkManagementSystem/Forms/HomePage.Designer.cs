@@ -1,6 +1,6 @@
 ﻿namespace WorkManagementSystem.Forms
 {
-    partial class CustomersForm
+    partial class HomePage
     {
         /// <summary>
         /// Required designer variable.
@@ -73,7 +73,7 @@
             btnDeleteCustomer.UseVisualStyleBackColor = true;
             btnDeleteCustomer.Click += btnDeleteCustomer_Click;
             // 
-            // CustomersForm
+            // HomePage
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
@@ -82,8 +82,8 @@
             Controls.Add(btnUpdateCustomer);
             Controls.Add(btnAddCustomer);
             Controls.Add(customerGridView);
-            Name = "CustomersForm";
-            Text = "Customers";
+            Name = "HomePage";
+            Text = "Scheduling Manager";
             ((System.ComponentModel.ISupportInitialize)customerGridView).EndInit();
             ResumeLayout(false);
         }

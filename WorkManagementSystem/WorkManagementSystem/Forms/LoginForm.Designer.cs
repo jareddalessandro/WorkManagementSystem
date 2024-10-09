@@ -133,7 +133,7 @@
             Controls.Add(passwordLabel);
             Controls.Add(usernameLabel);
             Name = "LoginForm";
-            Text = "Scheduling Management";
+            Text = "Scheduling Manager";
             ResumeLayout(false);
             PerformLayout();
         }

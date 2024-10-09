@@ -44,8 +44,8 @@ namespace WorkManagementSystem
             if (dataHandler.ValidateUser(loginUser.UserName, loginUser.Password))
             {
                 txtLoginError.Visible = false;
-                MainForm mainForm = new MainForm(loginUser);
-                mainForm.Show();
+                HomePage homePage = new HomePage(loginUser);
+                homePage.Show();
                 this.Hide();
 
             }

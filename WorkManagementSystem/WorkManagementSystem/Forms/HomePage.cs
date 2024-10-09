@@ -15,11 +15,11 @@ using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
 
 namespace WorkManagementSystem.Forms
 {
-    public partial class CustomersForm : Form
+    public partial class HomePage : Form
     {
         DataHandler DataHandler = new DataHandler();
         LoginUser _loginUser;
-        public CustomersForm(LoginUser user)
+        public HomePage(LoginUser user)
         {
             InitializeComponent();
             LoadCustomers();
