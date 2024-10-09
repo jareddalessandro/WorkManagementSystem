@@ -74,7 +74,7 @@ namespace WorkManagementSystem.Utils
                 {
                     Console.WriteLine("Connection Successful");
                     conn.Open();
-                    string query = @"SELECT c.customerId, c.customerName, a.address, a.address2, a.postalCode, a.phone, ci.city 
+                    string query = @"SELECT c.customerId, c.customerName, a.address, a.address2, a.postalCode, a.phone, ci.city, a.addressId 
                              FROM customer c
                              JOIN address a ON c.addressId = a.addressId
                              JOIN city ci ON a.cityId = ci.cityId";

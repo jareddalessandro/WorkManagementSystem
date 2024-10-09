@@ -153,49 +153,71 @@ namespace WorkManagementSystem.Forms
                     DataHandler.AddCustomer(customer, address, _loginUser);
                 }
             }
+            MessageBox.Show("Customer Updated Successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
             LoadCustomers();
         }
 
         private void btnUpdateCustomer_Click(object sender, EventArgs e)
         {
-            if (customerGridView.SelectedRows.Count == 0) return;
-
-            DataGridViewRow row = customerGridView.SelectedRows[0];
-
-            Customer customer = new Customer
+            if (customerGridView.SelectedRows.Count == 0)
             {
-                CustomerId = (int)row.Cells["customerId"].Value,
-                CustomerName = row.Cells["customerName"].Value.ToString(),
-                Active = true // Assuming active by default
-            };
-
-            Address address = new Address
+                MessageBox.Show("Error: Please select a row to update in the database.");
+                return;
+            }
+            try
             {
-                AddressId = (int)row.Cells["addressId"].Value,
-                AddressLine1 = row.Cells["address"].Value.ToString(),
-                AddressLine2 = row.Cells["address2"].Value.ToString(),
-                PostalCode = row.Cells["postalCode"].Value.ToString(),
-                Phone = row.Cells["phone"].Value.ToString()
-            };
+                DataGridViewRow row = customerGridView.SelectedRows[0];
 
-            DataHandler.UpdateCustomer(customer, address);
+                Customer customer = new Customer
+                {
+                    CustomerId = (int)row.Cells["customerId"].Value,
+                    CustomerName = row.Cells["customerName"].Value.ToString(),
+                    Active = true // Assuming active by default
+                };
 
-            // Refresh the grid after update
-            LoadCustomers();
+                Address address = new Address
+                {
+                    AddressId = (int)row.Cells["addressId"].Value,
+                    AddressLine1 = row.Cells["address"].Value.ToString(),
+                    AddressLine2 = row.Cells["address2"].Value.ToString(),
+                    PostalCode = row.Cells["postalCode"].Value.ToString(),
+                    Phone = row.Cells["phone"].Value.ToString()
+                };
+
+                DataHandler.UpdateCustomer(customer, address);
+
+                // Refresh the grid after update
+                LoadCustomers();
+                MessageBox.Show("Customer Updated Successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            catch (Exception ez)
+            {
+                MessageBox.Show("Error: Update attempt failed. Details: " + ez.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         private void btnDeleteCustomer_Click(object sender, EventArgs e)
         {
-            if (customerGridView.SelectedRows.Count == 0) return;
+            if (customerGridView.SelectedRows.Count == 0)
+            {
+                MessageBox.Show("Error: Please select a row to delete from the database.");
+                return;
+            }
+            try
+            {
+                DataGridViewRow row = customerGridView.SelectedRows[0];
+                int customerId = (int)row.Cells["customerId"].Value;
+                int addressId = (int)row.Cells["addressId"].Value;
 
-            DataGridViewRow row = customerGridView.SelectedRows[0];
-            int customerId = (int)row.Cells["customerId"].Value;
-            int addressId = (int)row.Cells["addressId"].Value;
-
-            DataHandler.DeleteCustomer(customerId, addressId);
-
-            LoadCustomers();
+                DataHandler.DeleteCustomer(customerId, addressId);
+                LoadCustomers();
+                MessageBox.Show("Customer Deleted Successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            catch (Exception exvc)
+            {
+                MessageBox.Show("Error: Delete attempt failed. Details: " + exvc.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         private int GetCityIdByName(string cityName)
@@ -211,21 +233,6 @@ namespace WorkManagementSystem.Forms
             throw new Exception($"City '{cityName}' not found.");  // Throw an error if the city doesn't exist
         }
 
-        private void SetActiveRow(object sender, DataGridViewCellEventArgs e)
-        {
-            // Get the row index of the edited cell
-            int rowIndex = e.RowIndex;
-
-            if (rowIndex >= 0 && rowIndex < customerGridView.Rows.Count)
-            {
-                // Set the current row as selected
-                customerGridView.ClearSelection();  // Clear any previous selections
-                customerGridView.Rows[rowIndex].Selected = true;  // Select the current row
-
-                // Optionally, you can set the current cell to the first column of the row
-                //customerGridView.CurrentCell = customerGridView.Rows[rowIndex].Cells[0];
-            }
-        }
 
     }
 }

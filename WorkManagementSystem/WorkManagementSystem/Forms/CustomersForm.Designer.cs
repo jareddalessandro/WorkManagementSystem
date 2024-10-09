@@ -42,7 +42,6 @@
             customerGridView.Name = "customerGridView";
             customerGridView.Size = new Size(883, 283);
             customerGridView.TabIndex = 0;
-            customerGridView.CellEndEdit += SetActiveRow;
             // 
             // btnAddCustomer
             // 
