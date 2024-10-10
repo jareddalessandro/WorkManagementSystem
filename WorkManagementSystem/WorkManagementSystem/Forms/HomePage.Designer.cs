@@ -32,22 +32,24 @@
             btnAddCustomer = new Button();
             btnUpdateCustomer = new Button();
             btnDeleteCustomer = new Button();
+            label1 = new Label();
             ((System.ComponentModel.ISupportInitialize)customerGridView).BeginInit();
             SuspendLayout();
             // 
             // customerGridView
             // 
             customerGridView.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            customerGridView.Location = new Point(108, 68);
+            customerGridView.Location = new Point(12, 66);
             customerGridView.Name = "customerGridView";
-            customerGridView.Size = new Size(883, 283);
+            customerGridView.Size = new Size(642, 283);
             customerGridView.TabIndex = 0;
             // 
             // btnAddCustomer
             // 
-            btnAddCustomer.Location = new Point(305, 372);
+            btnAddCustomer.Font = new Font("Segoe UI", 11F);
+            btnAddCustomer.Location = new Point(151, 374);
             btnAddCustomer.Name = "btnAddCustomer";
-            btnAddCustomer.Size = new Size(75, 23);
+            btnAddCustomer.Size = new Size(87, 36);
             btnAddCustomer.TabIndex = 1;
             btnAddCustomer.Text = "Add";
             btnAddCustomer.UseVisualStyleBackColor = true;
@@ -55,9 +57,10 @@
             // 
             // btnUpdateCustomer
             // 
-            btnUpdateCustomer.Location = new Point(454, 374);
+            btnUpdateCustomer.Font = new Font("Segoe UI", 11F);
+            btnUpdateCustomer.Location = new Point(269, 374);
             btnUpdateCustomer.Name = "btnUpdateCustomer";
-            btnUpdateCustomer.Size = new Size(75, 23);
+            btnUpdateCustomer.Size = new Size(87, 36);
             btnUpdateCustomer.TabIndex = 2;
             btnUpdateCustomer.Text = "Update";
             btnUpdateCustomer.UseVisualStyleBackColor = true;
@@ -65,27 +68,40 @@
             // 
             // btnDeleteCustomer
             // 
-            btnDeleteCustomer.Location = new Point(610, 374);
+            btnDeleteCustomer.Font = new Font("Segoe UI", 11F);
+            btnDeleteCustomer.Location = new Point(385, 374);
             btnDeleteCustomer.Name = "btnDeleteCustomer";
-            btnDeleteCustomer.Size = new Size(75, 23);
+            btnDeleteCustomer.Size = new Size(87, 36);
             btnDeleteCustomer.TabIndex = 3;
             btnDeleteCustomer.Text = "Delete";
             btnDeleteCustomer.UseVisualStyleBackColor = true;
             btnDeleteCustomer.Click += btnDeleteCustomer_Click;
             // 
+            // label1
+            // 
+            label1.AutoSize = true;
+            label1.Font = new Font("Segoe UI", 15F);
+            label1.Location = new Point(269, 22);
+            label1.Name = "label1";
+            label1.Size = new Size(104, 28);
+            label1.TabIndex = 4;
+            label1.Text = "Customers";
+            // 
             // HomePage
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1125, 505);
+            ClientSize = new Size(1425, 588);
+            Controls.Add(label1);
             Controls.Add(btnDeleteCustomer);
             Controls.Add(btnUpdateCustomer);
             Controls.Add(btnAddCustomer);
             Controls.Add(customerGridView);
             Name = "HomePage";
-            Text = "Scheduling Manager";
+            Text = " ";
             ((System.ComponentModel.ISupportInitialize)customerGridView).EndInit();
             ResumeLayout(false);
+            PerformLayout();
         }
 
         #endregion
@@ -94,5 +110,6 @@
         private Button btnAddCustomer;
         private Button btnUpdateCustomer;
         private Button btnDeleteCustomer;
+        private Label label1;
     }
 }

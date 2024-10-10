@@ -44,6 +44,7 @@ namespace WorkManagementSystem
             if (dataHandler.ValidateUser(loginUser.UserName, loginUser.Password))
             {
                 txtLoginError.Visible = false;
+                LogLogin(loginUser.UserName);
                 HomePage homePage = new HomePage(loginUser);
                 homePage.Show();
                 this.Hide();
@@ -95,5 +96,27 @@ namespace WorkManagementSystem
             txtLocationTag.Text = "Emplacement :";
         }
 
+        private void LogLogin(string username)
+        {
+            // Define the file path for the log (placing it in the root directory)
+            string filePath = @"..\..\..\Login_History.txt";
+
+            string timestamp = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss");
+            
+            string logEntry = $"User: {username}, Login Time: {timestamp}";
+
+            // Append the log entry to the file
+            try
+            {
+                using (StreamWriter sw = new StreamWriter(filePath, true)) 
+                {
+                    sw.WriteLine(logEntry);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error logging login information: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
     }
 }

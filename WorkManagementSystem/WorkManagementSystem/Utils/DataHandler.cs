@@ -54,16 +54,6 @@ namespace WorkManagementSystem.Utils
                 }
             }
         }
-        //public static string GetConnectionString()
-        //{
-        //    var configuration = new ConfigurationBuilder()
-        //        .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)  // Use the base directory of the application
-        //        .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-        //        .Build();
-
-        //    // Retrieve the connection string by name
-        //    return configuration.GetConnectionString("MyConnectionString");
-        //}
 
         public DataTable getCustomers()
         {
@@ -139,13 +129,13 @@ namespace WorkManagementSystem.Utils
                     cmdAddress.Parameters.AddWithValue("@postalCode", address.PostalCode);
                     cmdAddress.Parameters.AddWithValue("@phone", address.Phone);
                     cmdAddress.Parameters.AddWithValue("@cityId", address.CityId);
-                    cmdAddress.Parameters.AddWithValue("@createDate", DateTime.Now);
-                    cmdAddress.Parameters.AddWithValue("@lastUpdate", DateTime.Now);
+                    cmdAddress.Parameters.AddWithValue("@createDate", DateTime.UtcNow);
+                    cmdAddress.Parameters.AddWithValue("@lastUpdate", DateTime.UtcNow);
                     cmdAddress.Parameters.AddWithValue("@createdBy", user.UserName);
                     cmdAddress.Parameters.AddWithValue("@lastUpdateBy", user.UserName);
                     cmdAddress.ExecuteNonQuery();
 
-                    int addressId = (int)cmdAddress.LastInsertedId;  // Retrieve the addressId for inserting into customer
+                    int addressId = (int)cmdAddress.LastInsertedId;
 
                     // Insert into Customer, including createDate
                     string insertCustomerQuery = @"INSERT INTO customer (customerName, addressId, active, createDate, createdBy, lastUpdateBy, lastUpdate) 
@@ -154,8 +144,8 @@ namespace WorkManagementSystem.Utils
                     cmdCustomer.Parameters.AddWithValue("@customerName", customer.CustomerName);
                     cmdCustomer.Parameters.AddWithValue("@addressId", addressId);
                     cmdCustomer.Parameters.AddWithValue("@active", customer.Active);
-                    cmdCustomer.Parameters.AddWithValue("@createDate", DateTime.Now);
-                    cmdCustomer.Parameters.AddWithValue("@lastUpdate", DateTime.Now);
+                    cmdCustomer.Parameters.AddWithValue("@createDate", DateTime.UtcNow);
+                    cmdCustomer.Parameters.AddWithValue("@lastUpdate", DateTime.UtcNow);
                     cmdCustomer.Parameters.AddWithValue("@createdBy", user.UserName);
                     cmdCustomer.Parameters.AddWithValue("@lastUpdateBy", user.UserName);
                     cmdCustomer.ExecuteNonQuery();
