@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using System.Data;
 using WorkManagementSystem.Models;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
 
 
 namespace WorkManagementSystem.Utils
@@ -17,39 +18,74 @@ namespace WorkManagementSystem.Utils
         const string connectionString = $"server=127.0.0.1;database=client_schedule;user=sqlUser;password=Passw0rd!;";
 
 
-        public bool ValidateUser(string username, string password)
+        public int ValidateUser(string username, string password)
         {
             using (MySqlConnection conn = new MySqlConnection(connectionString))
             {
                 try
                 {
                     conn.Open();
-                    string query = $"SELECT * FROM user WHERE userName = '{username}' AND password = '{password}'";
+                    // Use parameterized query to prevent SQL injection
+                    string query = "SELECT userId FROM user WHERE userName = @username AND password = @password";
 
                     MySqlCommand cmd = new MySqlCommand(query, conn);
-                    MySqlDataReader reader = cmd.ExecuteReader();
+                    cmd.Parameters.AddWithValue("@username", username);
+                    cmd.Parameters.AddWithValue("@password", password);
 
+                    MySqlDataReader reader = cmd.ExecuteReader();
                     if (reader.HasRows)
                     {
+                        reader.Read();
+                        int userId = reader.GetInt32("userId");  
                         reader.Close();
-                        return true;
+                        return userId;  // Return the userId
                     }
                     else
                     {
                         reader.Close();
-                        return false;
+                        return -1;
                     }
-
                 }
                 catch (Exception ex)
                 {
+                    MessageBox.Show("Error: " + ex.Message);
+                    return -1;  // Return -1 on error
+                }
+                finally
+                {
+                    conn.Close();
+                }
+            }
+        }
 
+        public bool HasUpcomingAppointment(int userId)
+        {
+            using (MySqlConnection conn = new MySqlConnection(connectionString))
+            {
+                try
+                {
+                    conn.Open();
+
+                    // Query to check if an appointment exists within the next 15 minutes
+                    string query = @"SELECT COUNT(*) FROM appointment 
+                             WHERE userId = @userId 
+                             AND TIMESTAMPDIFF(MINUTE, UTC_TIMESTAMP(), start) BETWEEN 0 AND 15";
+
+                    MySqlCommand cmd = new MySqlCommand(query, conn);
+                    cmd.Parameters.AddWithValue("@userId", userId);
+
+                    
+                    int count = Convert.ToInt32(cmd.ExecuteScalar());
+
+                    return count > 0;  
+                }
+                catch (Exception ex)
+                {
                     MessageBox.Show("Error: " + ex.Message);
                     return false;
                 }
                 finally
                 {
-
                     conn.Close();
                 }
             }

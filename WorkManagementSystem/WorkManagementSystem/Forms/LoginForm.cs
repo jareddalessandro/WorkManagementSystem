@@ -4,6 +4,7 @@ using WorkManagementSystem.Forms;
 using WorkManagementSystem.Models;
 using WorkManagementSystem.Utils;
 
+
 namespace WorkManagementSystem
 {
     public partial class LoginForm : System.Windows.Forms.Form
@@ -40,14 +41,19 @@ namespace WorkManagementSystem
         {
             loginUser.Password = txtPassword.Text;
             loginUser.UserName = txtUsername.Text;
+            loginUser.UserId = dataHandler.ValidateUser(loginUser.UserName, loginUser.Password);
 
-            if (dataHandler.ValidateUser(loginUser.UserName, loginUser.Password))
+            if (loginUser.UserId != -1)
             {
                 txtLoginError.Visible = false;
                 LogLogin(loginUser.UserName);
                 HomePage homePage = new HomePage(loginUser);
                 homePage.Show();
                 this.Hide();
+                if (dataHandler.HasUpcomingAppointment(loginUser.UserId))
+                {
+                    MessageBox.Show("Alert! You have an appointment within 15 minutes of now.", "Alert", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
 
             }
             else

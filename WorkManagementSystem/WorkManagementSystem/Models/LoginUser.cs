@@ -13,6 +13,8 @@ namespace WorkManagementSystem.Models
         public string Location { get; set; }
 
         public string TimeZone { get; set; }
+
+        public int UserId { get; set; }
         
     }
 }
