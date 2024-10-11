@@ -126,6 +126,101 @@ namespace WorkManagementSystem.Utils
             }
         }
 
+        public DataTable getAllAppointments()
+        {
+            DataTable dt = new DataTable();
+            using (var conn = new MySqlConnection(connectionString))
+            {
+                try
+                {
+                    Console.WriteLine("Connection Successful");
+                    conn.Open();
+                    string query = @"SELECT 
+                                a.start,
+                                a.end,
+                                a.title,
+                                a.description,
+                                a.location,
+                                c.customerName,
+                                u.userName,
+                                a.appointmentId
+                            FROM 
+                                appointment a
+                            JOIN 
+                            customer c ON a.customerId = c.customerId
+                            JOIN 
+                            user u ON a.userId = u.userId
+                            WHERE 
+                            a.start > UTC_TIMESTAMP();  -- Get only future appointments based on UTC time";
+
+                    MySqlDataAdapter adapter = new MySqlDataAdapter(query, conn);
+
+                    adapter.Fill(dt);
+
+
+                }
+                catch (Exception ex)
+                {
+
+                    MessageBox.Show("Error: " + ex.Message);
+                }
+                finally
+                {
+
+                    conn.Close();
+
+                }
+                return dt;
+            }
+        }
+        public DataTable getAppointmentsByDate(DateTime date)
+        {
+            DataTable dt = new DataTable();
+            using (var conn = new MySqlConnection(connectionString))
+            {
+                try
+                {
+                    conn.Open();
+
+                    // Query to get appointments for a specific date (assuming 'start' and 'end' are UTC)
+                    string query = @"SELECT 
+                                a.start,
+                                a.end,
+                                a.title,
+                                a.description,
+                                a.location,
+                                c.customerName,
+                                u.userName
+                             FROM 
+                                appointment a
+                             JOIN 
+                                customer c ON a.customerId = c.customerId
+                             JOIN 
+                                user u ON a.userId = u.userId
+                             WHERE 
+                                DATE(a.start) = @date";
+
+                    MySqlCommand cmd = new MySqlCommand(query, conn);
+                    cmd.Parameters.AddWithValue("@date", date.ToString("yyyy-MM-dd"));  // Use the selected date in the query
+
+                    MySqlDataAdapter adapter = new MySqlDataAdapter(cmd);
+                    adapter.Fill(dt);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error: " + ex.Message);
+                }
+                finally
+                {
+                    conn.Close();
+                }
+
+                return dt;
+            }
+        }
+
+
+
         public DataTable GetCities()
         {
             DataTable cities = new DataTable();
@@ -226,6 +321,27 @@ namespace WorkManagementSystem.Utils
                 catch (Exception ex)
                 {
                     MessageBox.Show("Error updating customer: " + ex.Message);
+                }
+            }
+        }
+
+        public void DeleteAppointment(int appointmentId)
+        {
+            using (var conn = new MySqlConnection(connectionString))
+            {
+                try
+                {
+                    conn.Open();
+
+                    // Delete Customer first
+                    string deleteCustomerQuery = "DELETE FROM appointment WHERE appointmentId = @appointmentId";
+                    MySqlCommand cmdCustomer = new MySqlCommand(deleteCustomerQuery, conn);
+                    cmdCustomer.Parameters.AddWithValue("@appointmentId", appointmentId);
+                    cmdCustomer.ExecuteNonQuery();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error deleting appointment: " + ex.Message);
                 }
             }
         }

@@ -23,6 +23,7 @@ namespace WorkManagementSystem.Forms
         {
             InitializeComponent();
             LoadCustomers();
+            LoadAppointments();
             _loginUser = user;
         }
 
@@ -58,6 +59,71 @@ namespace WorkManagementSystem.Forms
             catch (Exception ex)
             {
                 MessageBox.Show("Error loading customers: " + ex.Message);
+            }
+        }
+
+        private void LoadAppointments()
+        {
+            try
+            {
+                if (appointmentGridView == null)
+                {
+                    MessageBox.Show("Error: appointmentGridView is not initialized.");
+                    return;
+                }
+
+                appointmentGridView.Columns.Clear();
+
+                DataTable appointmentDate = DataHandler.getAllAppointments();
+
+                if (appointmentDate == null || appointmentDate.Rows.Count == 0)
+                {
+                    MessageBox.Show("No appointment data available.");
+                    return;
+                }
+
+                appointmentGridView.DataSource = appointmentDate;
+
+                // Optionally hide ID fields
+                if (appointmentGridView.Columns["appointmentId"] != null)
+                    appointmentGridView.Columns["appointmentId"].Visible = false;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error loading appointments: " + ex.Message);
+            }
+        }
+
+        private void LoadAppointmentsForDate(DateTime date)
+        {
+            try
+            {
+                if (appointmentGridView == null)
+                {
+                    MessageBox.Show("Error: appointmentGridView is not initialized.");
+                    return;
+                }
+
+                appointmentGridView.Columns.Clear();
+
+                // Call the DataHandler to get appointments for the selected date
+                DataTable appointmentData = DataHandler.getAppointmentsByDate(date);
+
+                if (appointmentData == null || appointmentData.Rows.Count == 0)
+                {
+                    MessageBox.Show("No appointments available for this date.");
+                    return;
+                }
+
+                appointmentGridView.DataSource = appointmentData;
+
+                // Optionally hide ID fields
+                if (appointmentGridView.Columns["customerId"] != null)
+                    appointmentGridView.Columns["customerId"].Visible = false;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error loading appointments: " + ex.Message);
             }
         }
 
@@ -100,9 +166,9 @@ namespace WorkManagementSystem.Forms
                 }
 
                 // Confirm that the row does not have an ID but does have a customerName (not the new empty row)
-                if (string.IsNullOrWhiteSpace(row.Cells["customerId"].Value.ToString())  && !(string.IsNullOrWhiteSpace(row.Cells["customerName"].Value.ToString())))
+                if (string.IsNullOrWhiteSpace(row.Cells["customerId"].Value.ToString()) && !(string.IsNullOrWhiteSpace(row.Cells["customerName"].Value.ToString())))
                 {
-                    
+
                     // Trim and validate required fields (name, address, phone, city)
                     string customerName = row.Cells["customerName"].Value?.ToString().Trim();
                     string addressLine1 = row.Cells["address"].Value?.ToString().Trim();
@@ -233,7 +299,44 @@ namespace WorkManagementSystem.Forms
             throw new Exception($"City '{cityName}' not found.");  // Throw an error if the city doesn't exist
         }
 
+        private void monthCalendar1_DateChanged(object sender, DateRangeEventArgs e)
+        {
+            DateTime selectedDate = e.Start;  // Get the selected date from the calendar
+            LoadAppointmentsForDate(selectedDate);
+            monthCalendar1.Visible = false;
+        }
 
+        private void btnSelectDate_Click(object sender, EventArgs e)
+        {
+            monthCalendar1.Visible = true;
+        }
+
+        private void btnResetCalender_Click(object sender, EventArgs e)
+        {
+            LoadAppointments();
+        }
+
+        private void btnDeleteAppointment_Click(object sender, EventArgs e)
+        {
+            if (appointmentGridView.SelectedRows.Count == 0)
+            {
+                MessageBox.Show("Error: Please select a row to delete from the database.");
+                return;
+            }
+            try
+            {
+                DataGridViewRow row = appointmentGridView.SelectedRows[0];
+                int appointmentId = (int)row.Cells["appointmentId"].Value;
+
+                DataHandler.DeleteAppointment(appointmentId);
+                LoadAppointments();
+                MessageBox.Show("Appointment Deleted Successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            catch (Exception exvc)
+            {
+                MessageBox.Show("Error: Delete attempt failed. Details: " + exvc.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
     }
 }
 
