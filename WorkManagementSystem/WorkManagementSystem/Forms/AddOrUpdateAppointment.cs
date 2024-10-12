@@ -71,8 +71,8 @@ namespace WorkManagementSystem.Forms
                     MessageBox.Show("Error: Please select a customer.");
                     return;
                 }
-                appointment.Start = startDatePicker.Value;
-                appointment.End = endDatePicker.Value;
+                appointment.Start = ConvertLocalToUtc(startDatePicker.Value);
+                appointment.End = ConvertLocalToUtc(endDatePicker.Value);
                 appointment.Title = txtTitle.Text;
                 appointment.Description = txtDescription.Text;
                 appointment.Type = txtType.Text;
@@ -81,7 +81,7 @@ namespace WorkManagementSystem.Forms
                 appointment.Location = txtLocation.Text;
                 appointment.CustomerId = Convert.ToInt32(comboCustomer.SelectedValue);
                 appointment.UserId = _existingAppointment.UserId;
-                appointment.CreateDate = _existingAppointment.CreateDate;
+                appointment.CreateDate = ConvertLocalToUtc(_existingAppointment.CreateDate);
                 appointment.LastUpdate = DateTime.UtcNow;
                 appointment.CreatedBy = _existingAppointment.CreatedBy;
                 appointment.LastUpdateBy = _loginUser.UserName;
@@ -103,8 +103,11 @@ namespace WorkManagementSystem.Forms
                     MessageBox.Show("Error: Appointment must be between Mon-Fri 9:00am to 5:00pm EST");
                     return;
                 }
-                if (appointment.Start.Hour - 5 < 9 || appointment.Start.Hour - 5 >= 17 ||
-                   appointment.End.Hour - 5 <= 9 || appointment.End.Hour - 5 > 17 || appointment.End.Hour - 5 >= 17 && appointment.End.Minute > 0)
+
+                DateTime estStart = ConvertUtcToEST(appointment.Start);
+                DateTime estEnd = ConvertUtcToEST(appointment.End);
+
+                if (estStart.Hour < 9 || estStart.Hour >= 17 || estEnd.Hour < 9 || estEnd.Hour > 17)
                 {
                     MessageBox.Show("Error: Appointment must be between Mon-Fri 9:00am to 5:00pm EST");
                     return;
@@ -132,8 +135,8 @@ namespace WorkManagementSystem.Forms
                     MessageBox.Show("Error: Please select a customer.");
                     return;
                 }
-                appointment.Start = startDatePicker.Value;
-                appointment.End = endDatePicker.Value;
+                appointment.Start = ConvertLocalToUtc(startDatePicker.Value);
+                appointment.End = ConvertLocalToUtc(endDatePicker.Value);
                 appointment.Title = txtTitle.Text;
                 appointment.Description = txtDescription.Text;
                 appointment.Type = txtType.Text;
@@ -163,12 +166,16 @@ namespace WorkManagementSystem.Forms
                     MessageBox.Show("Error: Appointment must be between Mon-Fri 9:00am to 5:00pm EST");
                     return;
                 }
-                if (appointment.Start.Hour - 5 < 9 || appointment.Start.Hour - 5 >= 17 ||
-                   appointment.End.Hour - 5 <= 9 || appointment.End.Hour - 5 > 17 || appointment.End.Hour - 5 >= 17 && appointment.End.Minute > 0)
+
+                DateTime estStart = ConvertUtcToEST(appointment.Start);
+                DateTime estEnd = ConvertUtcToEST(appointment.End);
+
+                if (estStart.Hour < 9 || estStart.Hour >= 17 || estEnd.Hour < 9 || estEnd.Hour > 17)
                 {
                     MessageBox.Show("Error: Appointment must be between Mon-Fri 9:00am to 5:00pm EST");
                     return;
                 }
+
                 if (appointment.Type.Length < 1 || appointment.Title.Length < 1)
                 {
                     MessageBox.Show("Error: Please enter a Title and a Type.");
@@ -204,6 +211,19 @@ namespace WorkManagementSystem.Forms
             {
                 MessageBox.Show("Error loading customers: " + ex.Message);
             }
+        }
+        private DateTime ConvertLocalToUtc(DateTime localDateTime)
+        {
+            // Ensure that the local time has the DateTimeKind.Local
+            localDateTime = DateTime.SpecifyKind(localDateTime, DateTimeKind.Local);
+
+            return TimeZoneInfo.ConvertTimeToUtc(localDateTime, TimeZoneInfo.Local);
+        }
+
+        private DateTime ConvertUtcToEST(DateTime utcDateTime)
+        {
+            TimeZoneInfo estZone = TimeZoneInfo.FindSystemTimeZoneById("Eastern Standard Time");
+            return TimeZoneInfo.ConvertTimeFromUtc(utcDateTime, estZone);
         }
     }
 }

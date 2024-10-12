@@ -74,15 +74,23 @@ namespace WorkManagementSystem.Forms
 
                 appointmentGridView.Columns.Clear();
 
-                DataTable appointmentDate = DataHandler.getAllAppointments();
+                DataTable appointmentData = DataHandler.getAllAppointments();
 
-                if (appointmentDate == null || appointmentDate.Rows.Count == 0)
+                if (appointmentData == null || appointmentData.Rows.Count == 0)
                 {
                     MessageBox.Show("No appointment data available.");
                     return;
                 }
 
-                appointmentGridView.DataSource = appointmentDate;
+                foreach (DataRow row in appointmentData.Rows)
+                {
+                    // Convert the start and end times from UTC to local time
+                    row["start"] = ConvertUtcToLocal((DateTime)row["start"]);
+                    row["end"] = ConvertUtcToLocal((DateTime)row["end"]);
+                    row["createDate"] = ConvertUtcToLocal((DateTime)row["createDate"]);
+                }
+
+                appointmentGridView.DataSource = appointmentData;
 
                 // Optionally hide ID fields
                 if (appointmentGridView.Columns["appointmentId"] != null)
@@ -113,6 +121,14 @@ namespace WorkManagementSystem.Forms
                 {
                     MessageBox.Show("No appointments available for this date.");
                     return;
+                }
+
+                foreach (DataRow row in appointmentData.Rows)
+                {
+                    // Convert the start and end times from UTC to local time
+                    row["start"] = ConvertUtcToLocal((DateTime)row["start"]);
+                    row["end"] = ConvertUtcToLocal((DateTime)row["end"]);
+                    row["createDate"] = ConvertUtcToLocal((DateTime)row["createDate"]);
                 }
 
                 appointmentGridView.DataSource = appointmentData;
@@ -374,6 +390,14 @@ namespace WorkManagementSystem.Forms
 
             AddOrUpdateAppointment apptForm = new AddOrUpdateAppointment(_loginUser, existingAppointment);
             apptForm.Show();
+        }
+
+        private DateTime ConvertUtcToLocal(DateTime utcDateTime)
+        {
+            // Ensure that the UTC time has the DateTimeKind.Utc
+            utcDateTime = DateTime.SpecifyKind(utcDateTime, DateTimeKind.Utc);
+
+            return TimeZoneInfo.ConvertTimeFromUtc(utcDateTime, TimeZoneInfo.Local);
         }
     }
 }

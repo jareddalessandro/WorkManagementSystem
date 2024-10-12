@@ -58,6 +58,14 @@ namespace WorkManagementSystem.Utils
             }
         }
 
+        private DateTime ConvertLocalToUtc(DateTime localDateTime)
+        {
+            // Ensure that the local time has the DateTimeKind.Local
+            localDateTime = DateTime.SpecifyKind(localDateTime, DateTimeKind.Local);
+
+            return TimeZoneInfo.ConvertTimeToUtc(localDateTime, TimeZoneInfo.Local);
+        }
+
         public bool HasUpcomingAppointment(int userId)
         {
             using (MySqlConnection conn = new MySqlConnection(connectionString))
@@ -317,12 +325,13 @@ namespace WorkManagementSystem.Utils
 
                     // Update Customer
                     string updateCustomerQuery = @"UPDATE customer 
-                                           SET customerName = @customerName, active = @active 
+                                           SET customerName = @customerName, active = @active, lastUpdate = @lastUpdate
                                            WHERE customerId = @customerId";
                     MySqlCommand cmdCustomer = new MySqlCommand(updateCustomerQuery, conn);
                     cmdCustomer.Parameters.AddWithValue("@customerName", customer.CustomerName);
                     cmdCustomer.Parameters.AddWithValue("@active", customer.Active);
                     cmdCustomer.Parameters.AddWithValue("@customerId", customer.CustomerId);
+                    cmdCustomer.Parameters.AddWithValue("@lastUpdate", DateTime.UtcNow);
                     cmdCustomer.ExecuteNonQuery();
                 }
                 catch (Exception ex)
