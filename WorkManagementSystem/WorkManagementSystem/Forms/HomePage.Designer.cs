@@ -124,6 +124,7 @@
             btnAddAppointment.TabIndex = 7;
             btnAddAppointment.Text = "Add";
             btnAddAppointment.UseVisualStyleBackColor = true;
+            btnAddAppointment.Click += btnAddAppointment_Click;
             // 
             // btnUpdateAppointment
             // 
@@ -134,6 +135,7 @@
             btnUpdateAppointment.TabIndex = 8;
             btnUpdateAppointment.Text = "Update";
             btnUpdateAppointment.UseVisualStyleBackColor = true;
+            btnUpdateAppointment.Click += btnUpdateAppointment_Click;
             // 
             // btnDeleteAppointment
             // 

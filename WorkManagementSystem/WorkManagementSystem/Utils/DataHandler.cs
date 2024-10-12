@@ -141,6 +141,13 @@ namespace WorkManagementSystem.Utils
                                 a.title,
                                 a.description,
                                 a.location,
+                                a.type,
+                                a.contact,
+                                a.url,
+                                a.createDate,
+                                a.createdBy,
+                                a.customerId,
+                                a.userId,
                                 c.customerName,
                                 u.userName,
                                 a.appointmentId
@@ -372,6 +379,174 @@ namespace WorkManagementSystem.Utils
                 }
             }
         }
+
+        public static DataTable GetAllCustomers()
+        {
+            DataTable dt = new DataTable();
+            using (var conn = new MySqlConnection(connectionString))
+            {
+                try
+                {
+                    conn.Open();
+                    string query = "SELECT customerId, customerName FROM customer ORDER BY customerName";
+
+                    MySqlCommand cmd = new MySqlCommand(query, conn);
+                    MySqlDataAdapter adapter = new MySqlDataAdapter(cmd);
+                    adapter.Fill(dt);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error fetching customers: " + ex.Message);
+                }
+                finally
+                {
+                    conn.Close();
+                }
+            }
+            return dt;
+        }
+
+        public void AddAppointment(Appointment appointment)
+        {
+            using (var conn = new MySqlConnection(connectionString))
+            {
+                try
+                {
+                    conn.Open();
+                    string query = @"INSERT INTO appointment (customerId, userId, title, description, location, contact, type, url, start, end, createDate, createdBy, lastUpdate, lastUpdateBy)
+                             VALUES (@customerId, @userId, @title, @description, @location, @contact, @type, @url, @start, @end, @createDate, @createdBy, @lastUpdate, @lastUpdateBy)";
+
+                    MySqlCommand cmd = new MySqlCommand(query, conn);
+                    cmd.Parameters.AddWithValue("@customerId", appointment.CustomerId);
+                    cmd.Parameters.AddWithValue("@userId", appointment.UserId);
+                    cmd.Parameters.AddWithValue("@title", appointment.Title);
+                    cmd.Parameters.AddWithValue("@description", appointment.Description);
+                    cmd.Parameters.AddWithValue("@location", appointment.Location);
+                    cmd.Parameters.AddWithValue("@contact", appointment.Contact);
+                    cmd.Parameters.AddWithValue("@type", appointment.Type);
+                    cmd.Parameters.AddWithValue("@url", appointment.Url);
+                    cmd.Parameters.AddWithValue("@start", appointment.Start);
+                    cmd.Parameters.AddWithValue("@end", appointment.End);
+                    cmd.Parameters.AddWithValue("@createDate", appointment.CreateDate);
+                    cmd.Parameters.AddWithValue("@createdBy", appointment.CreatedBy);
+                    cmd.Parameters.AddWithValue("@lastUpdate", appointment.LastUpdate);
+                    cmd.Parameters.AddWithValue("@lastUpdateBy", appointment.LastUpdateBy);
+
+                    cmd.ExecuteNonQuery();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error: " + ex.Message);
+                }
+                finally
+                {
+                    conn.Close();
+                }
+            }
+        }
+
+        public void UpdateAppointment(Appointment appointment)
+        {
+            using (var conn = new MySqlConnection(connectionString))
+            {
+                try
+                {
+                    conn.Open();
+
+                    // Update query for existing appointment
+                    string query = @"UPDATE appointment 
+                             SET customerId = @customerId, 
+                                 userId = @userId, 
+                                 title = @title, 
+                                 description = @description, 
+                                 location = @location, 
+                                 contact = @contact, 
+                                 type = @type, 
+                                 url = @url, 
+                                 start = @start, 
+                                 end = @end, 
+                                 lastUpdate = @lastUpdate, 
+                                 lastUpdateBy = @lastUpdateBy 
+                             WHERE appointmentId = @appointmentId";
+
+                    MySqlCommand cmd = new MySqlCommand(query, conn);
+
+                    // Adding parameters for the query
+                    cmd.Parameters.AddWithValue("@customerId", appointment.CustomerId);
+                    cmd.Parameters.AddWithValue("@userId", appointment.UserId);
+                    cmd.Parameters.AddWithValue("@title", appointment.Title);
+                    cmd.Parameters.AddWithValue("@description", appointment.Description);
+                    cmd.Parameters.AddWithValue("@location", appointment.Location);
+                    cmd.Parameters.AddWithValue("@contact", appointment.Contact);
+                    cmd.Parameters.AddWithValue("@type", appointment.Type);
+                    cmd.Parameters.AddWithValue("@url", appointment.Url);
+                    cmd.Parameters.AddWithValue("@start", appointment.Start);
+                    cmd.Parameters.AddWithValue("@end", appointment.End);
+                    cmd.Parameters.AddWithValue("@lastUpdate", appointment.LastUpdate);
+                    cmd.Parameters.AddWithValue("@lastUpdateBy", appointment.LastUpdateBy);
+                    cmd.Parameters.AddWithValue("@appointmentId", appointment.AppointmentId); // Ensure this is passed when updating
+
+                    // Execute the query
+                    cmd.ExecuteNonQuery();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error updating appointment: " + ex.Message);
+                }
+                finally
+                {
+                    conn.Close();
+                }
+            }
+        }
+
+
+        public bool IsAppointmentOverlapping(DateTime newStart, DateTime newEnd, int appointmentId = 0)
+        {
+            using (var conn = new MySqlConnection(connectionString))
+            {
+                try
+                {
+                    conn.Open();
+
+                    // Build the query to check for overlapping appointments
+                    string query = @"SELECT COUNT(*) 
+                             FROM appointment 
+                             WHERE 
+                                 (start <= @newEnd AND end >= @newStart)";
+
+                    // If updating an existing appointment, exclude it from the check
+                    if (appointmentId > 0)
+                    {
+                        query += " AND appointmentId != @appointmentId";
+                    }
+
+                    MySqlCommand cmd = new MySqlCommand(query, conn);
+                    cmd.Parameters.AddWithValue("@newStart", newStart);
+                    cmd.Parameters.AddWithValue("@newEnd", newEnd);
+
+                    // Only add the appointmentId parameter if we're updating an existing appointment
+                    if (appointmentId > 0)
+                    {
+                        cmd.Parameters.AddWithValue("@appointmentId", appointmentId);
+                    }
+
+                    int overlapCount = Convert.ToInt32(cmd.ExecuteScalar());
+
+                    return overlapCount > 0;
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error checking for overlapping appointments: " + ex.Message);
+                    return false;
+                }
+                finally
+                {
+                    conn.Close();
+                }
+            }
+        }
+
 
     }
 }

@@ -337,6 +337,40 @@ namespace WorkManagementSystem.Forms
                 MessageBox.Show("Error: Delete attempt failed. Details: " + exvc.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
+
+        private void btnAddAppointment_Click(object sender, EventArgs e)
+        {
+            AddOrUpdateAppointment apptForm = new AddOrUpdateAppointment(_loginUser);
+            apptForm.Show();
+        }
+
+        private void btnUpdateAppointment_Click(object sender, EventArgs e)
+        {
+            if (appointmentGridView.SelectedRows.Count == 0)
+            {
+                MessageBox.Show("Error: Please select a row to update from the database.");
+                return;
+            }
+
+            DataGridViewRow row = appointmentGridView.SelectedRows[0];
+            Appointment existingAppointment = new Appointment();
+            existingAppointment.AppointmentId = (int)row.Cells["appointmentId"].Value;
+            existingAppointment.CustomerId = (int)row.Cells["customerId"].Value;
+            existingAppointment.UserId = (int)row.Cells["userId"].Value;
+            existingAppointment.Title = (string)row.Cells["title"].Value;
+            existingAppointment.Description = (string)row.Cells["description"].Value;
+            existingAppointment.Location = (string) row.Cells["location"].Value;
+            existingAppointment.Contact = (string)row.Cells["contact"].Value;
+            existingAppointment.Type = (string)row.Cells["type"].Value;
+            existingAppointment.Url = (string)row.Cells["url"].Value;
+            existingAppointment.Start = (DateTime)row.Cells["start"].Value;
+            existingAppointment.End = (DateTime)row.Cells["end"].Value;
+            existingAppointment.CreateDate = (DateTime)row.Cells["createDate"].Value;
+            existingAppointment.CreatedBy = (string)row.Cells["createdBy"].Value;
+
+            AddOrUpdateAppointment apptForm = new AddOrUpdateAppointment(_loginUser, existingAppointment);
+            apptForm.Show();
+        }
     }
 }
 
