@@ -189,6 +189,7 @@
             btnReports.TabIndex = 13;
             btnReports.Text = "Reports";
             btnReports.UseVisualStyleBackColor = true;
+            btnReports.Click += btnReports_Click;
             // 
             // HomePage
             // 

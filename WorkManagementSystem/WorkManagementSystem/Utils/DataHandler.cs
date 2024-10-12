@@ -188,6 +188,63 @@ namespace WorkManagementSystem.Utils
                 return dt;
             }
         }
+
+        public List<Appointment> GetAppointments()
+        {
+            List<Appointment> appointments = new List<Appointment>();
+
+            using (var conn = new MySqlConnection(connectionString))
+            {
+                try
+                {
+                    conn.Open();
+
+                    string query = @"SELECT appointmentId, customerId, userId, title, description, location, 
+                                    contact, type, url, start, end, createDate, createdBy, 
+                                    lastUpdate, lastUpdateBy
+                             FROM appointment";
+
+                    MySqlCommand cmd = new MySqlCommand(query, conn);
+                    MySqlDataReader reader = cmd.ExecuteReader();
+
+                    while (reader.Read())
+                    {
+                        Appointment appointment = new Appointment
+                        {
+                            AppointmentId = reader.GetInt32("appointmentId"),
+                            CustomerId = reader.GetInt32("customerId"),
+                            UserId = reader.GetInt32("userId"),
+                            Title = reader.GetString("title"),
+                            Description = reader.GetString("description"),
+                            Location = reader.GetString("location"),
+                            Contact = reader.GetString("contact"),
+                            Type = reader.GetString("type"),
+                            Url = reader.GetString("url"),
+                            Start = reader.GetDateTime("start"),
+                            End = reader.GetDateTime("end"),
+                            CreateDate = reader.GetDateTime("createDate"),
+                            CreatedBy = reader.GetString("createdBy"),
+                            LastUpdate = reader.GetDateTime("lastUpdate"),
+                            LastUpdateBy = reader.GetString("lastUpdateBy")
+                        };
+
+                        appointments.Add(appointment);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error fetching appointments: " + ex.Message);
+                }
+                finally
+                {
+                    conn.Close();
+                }
+            }
+
+            return appointments;
+        }
+
+
         public DataTable getAppointmentsByDate(DateTime date)
         {
             DataTable dt = new DataTable();

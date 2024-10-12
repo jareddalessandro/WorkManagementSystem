@@ -55,6 +55,7 @@ namespace WorkManagementSystem.Forms
 
                 if (customerGridView.Columns["addressId"] != null)
                     customerGridView.Columns["addressId"].Visible = false;
+
             }
             catch (Exception ex)
             {
@@ -92,9 +93,12 @@ namespace WorkManagementSystem.Forms
 
                 appointmentGridView.DataSource = appointmentData;
 
-                // Optionally hide ID fields
                 if (appointmentGridView.Columns["appointmentId"] != null)
                     appointmentGridView.Columns["appointmentId"].Visible = false;
+                if (appointmentGridView.Columns["customerId"] != null)
+                    appointmentGridView.Columns["customerId"].Visible = false;
+                if (appointmentGridView.Columns["userId"] != null)
+                    appointmentGridView.Columns["userId"].Visible = false;
             }
             catch (Exception ex)
             {
@@ -379,7 +383,7 @@ namespace WorkManagementSystem.Forms
             existingAppointment.UserId = (int)row.Cells["userId"].Value;
             existingAppointment.Title = (string)row.Cells["title"].Value;
             existingAppointment.Description = (string)row.Cells["description"].Value;
-            existingAppointment.Location = (string) row.Cells["location"].Value;
+            existingAppointment.Location = (string)row.Cells["location"].Value;
             existingAppointment.Contact = (string)row.Cells["contact"].Value;
             existingAppointment.Type = (string)row.Cells["type"].Value;
             existingAppointment.Url = (string)row.Cells["url"].Value;
@@ -398,6 +402,12 @@ namespace WorkManagementSystem.Forms
             utcDateTime = DateTime.SpecifyKind(utcDateTime, DateTimeKind.Utc);
 
             return TimeZoneInfo.ConvertTimeFromUtc(utcDateTime, TimeZoneInfo.Local);
+        }
+
+        private void btnReports_Click(object sender, EventArgs e)
+        {
+            Reports reports = new Reports();
+            reports.Show();
         }
     }
 }
