@@ -150,7 +150,7 @@
             // 
             // monthCalendar1
             // 
-            monthCalendar1.Location = new Point(995, 445);
+            monthCalendar1.Location = new Point(780, 187);
             monthCalendar1.MaxDate = new DateTime(2100, 12, 31, 0, 0, 0, 0);
             monthCalendar1.MinDate = new DateTime(2001, 1, 1, 0, 0, 0, 0);
             monthCalendar1.Name = "monthCalendar1";

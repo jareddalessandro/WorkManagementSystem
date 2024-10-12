@@ -36,6 +36,7 @@
             btnLogin = new Button();
             txtLoginError = new Label();
             loginLabel = new Label();
+            txtTimezoneTag = new Label();
             SuspendLayout();
             // 
             // usernameLabel
@@ -81,9 +82,9 @@
             txtLocationTag.Font = new Font("Segoe UI", 14F);
             txtLocationTag.Location = new Point(12, 416);
             txtLocationTag.Name = "txtLocationTag";
-            txtLocationTag.Size = new Size(93, 25);
+            txtLocationTag.Size = new Size(98, 25);
             txtLocationTag.TabIndex = 4;
-            txtLocationTag.Text = "Location: ";
+            txtLocationTag.Text = "Location:  ";
             // 
             // btnLogin
             // 
@@ -119,11 +120,22 @@
             loginLabel.TabIndex = 7;
             loginLabel.Text = "Login";
             // 
+            // txtTimezoneTag
+            // 
+            txtTimezoneTag.AutoSize = true;
+            txtTimezoneTag.Font = new Font("Segoe UI", 14F);
+            txtTimezoneTag.Location = new Point(12, 391);
+            txtTimezoneTag.Name = "txtTimezoneTag";
+            txtTimezoneTag.Size = new Size(103, 25);
+            txtTimezoneTag.TabIndex = 8;
+            txtTimezoneTag.Text = "Timezone: ";
+            // 
             // LoginForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(800, 450);
+            Controls.Add(txtTimezoneTag);
             Controls.Add(loginLabel);
             Controls.Add(txtLoginError);
             Controls.Add(btnLogin);
@@ -148,5 +160,6 @@
         private Button btnLogin;
         private Label txtLoginError;
         private Label loginLabel;
+        private Label txtTimezoneTag;
     }
 }

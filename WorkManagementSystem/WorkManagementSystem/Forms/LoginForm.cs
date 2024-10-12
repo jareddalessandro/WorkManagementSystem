@@ -35,6 +35,7 @@ namespace WorkManagementSystem
                     break;
             }
             txtLocationTag.Text = txtLocationTag.Text + loginUser.Location;
+            txtTimezoneTag.Text = txtTimezoneTag.Text + loginUser.TimeZone;
         }
 
         private void btnLogin_Click(object sender, EventArgs e)
