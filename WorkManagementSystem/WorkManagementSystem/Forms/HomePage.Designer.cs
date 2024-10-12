@@ -118,7 +118,7 @@
             // btnAddAppointment
             // 
             btnAddAppointment.Font = new Font("Segoe UI", 11F);
-            btnAddAppointment.Location = new Point(942, 374);
+            btnAddAppointment.Location = new Point(1077, 365);
             btnAddAppointment.Name = "btnAddAppointment";
             btnAddAppointment.Size = new Size(87, 36);
             btnAddAppointment.TabIndex = 7;
@@ -129,7 +129,7 @@
             // btnUpdateAppointment
             // 
             btnUpdateAppointment.Font = new Font("Segoe UI", 11F);
-            btnUpdateAppointment.Location = new Point(1072, 374);
+            btnUpdateAppointment.Location = new Point(1207, 365);
             btnUpdateAppointment.Name = "btnUpdateAppointment";
             btnUpdateAppointment.Size = new Size(87, 36);
             btnUpdateAppointment.TabIndex = 8;
@@ -140,7 +140,7 @@
             // btnDeleteAppointment
             // 
             btnDeleteAppointment.Font = new Font("Segoe UI", 11F);
-            btnDeleteAppointment.Location = new Point(1199, 374);
+            btnDeleteAppointment.Location = new Point(1334, 365);
             btnDeleteAppointment.Name = "btnDeleteAppointment";
             btnDeleteAppointment.Size = new Size(87, 36);
             btnDeleteAppointment.TabIndex = 9;
@@ -161,20 +161,20 @@
             // btnResetCalender
             // 
             btnResetCalender.Font = new Font("Segoe UI", 11F);
-            btnResetCalender.Location = new Point(825, 432);
+            btnResetCalender.Location = new Point(780, 423);
             btnResetCalender.Name = "btnResetCalender";
-            btnResetCalender.Size = new Size(87, 36);
+            btnResetCalender.Size = new Size(108, 36);
             btnResetCalender.TabIndex = 11;
-            btnResetCalender.Text = "Reset";
+            btnResetCalender.Text = "Reset/Refresh";
             btnResetCalender.UseVisualStyleBackColor = true;
             btnResetCalender.Click += btnResetCalender_Click;
             // 
             // btnSelectDate
             // 
             btnSelectDate.Font = new Font("Segoe UI", 11F);
-            btnSelectDate.Location = new Point(825, 374);
+            btnSelectDate.Location = new Point(780, 365);
             btnSelectDate.Name = "btnSelectDate";
-            btnSelectDate.Size = new Size(87, 52);
+            btnSelectDate.Size = new Size(108, 52);
             btnSelectDate.TabIndex = 12;
             btnSelectDate.Text = "Select Date";
             btnSelectDate.UseVisualStyleBackColor = true;

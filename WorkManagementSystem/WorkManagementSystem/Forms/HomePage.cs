@@ -152,7 +152,7 @@ namespace WorkManagementSystem.Forms
             // Fetch the list of valid cities from the database
             DataTable validCities = DataHandler.GetCities();
             var cityNames = validCities.AsEnumerable().Select(row => row["city"].ToString()).ToList();
-
+            int addedCounter = 0;
             foreach (DataGridViewRow row in customerGridView.Rows)
             {
                 try
@@ -215,11 +215,15 @@ namespace WorkManagementSystem.Forms
                         Phone = phone,
                         CityId = GetCityIdByName(city)  // Retrieve the cityId from the database by name
                     };
-
+                    addedCounter++;
                     DataHandler.AddCustomer(customer, address, _loginUser);
+                    MessageBox.Show("Customer Updated Successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
             }
-            MessageBox.Show("Customer Updated Successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            if (addedCounter == 0)
+            {
+                MessageBox.Show("Error: Please enter your new customer data in-line.");
+            }
 
             LoadCustomers();
         }
