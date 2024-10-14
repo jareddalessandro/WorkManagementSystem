@@ -196,9 +196,6 @@ namespace WorkManagementSystem.Forms
                     string postalCode = row.Cells["postalCode"].Value?.ToString().Trim();  // Optional validation for postal code
                     string city = row.Cells["city"].Value?.ToString().Trim();
 
-                    Console.WriteLine("Will anything print");
-                    Console.WriteLine("New Address: ", city, postalCode);
-
                     // Ensure name, address, phone, and city fields are filled out
                     if (string.IsNullOrWhiteSpace(customerName) || string.IsNullOrWhiteSpace(addressLine1) ||
                         string.IsNullOrWhiteSpace(phone) || string.IsNullOrWhiteSpace(city))
@@ -250,6 +247,9 @@ namespace WorkManagementSystem.Forms
 
         private void btnUpdateCustomer_Click(object sender, EventArgs e)
         {
+            DataTable validCities = DataHandler.GetCities();
+            var cityNames = validCities.AsEnumerable().Select(row => row["city"].ToString()).ToList();
+
             if (customerGridView.SelectedRows.Count == 0)
             {
                 MessageBox.Show("Error: Please select a row to update in the database.");
@@ -259,23 +259,60 @@ namespace WorkManagementSystem.Forms
             {
                 DataGridViewRow row = customerGridView.SelectedRows[0];
 
+                // Trim and validate required fields (name, address, phone, city)
+                string customerName = row.Cells["customerName"].Value?.ToString().Trim();
+                string addressLine1 = row.Cells["address"].Value?.ToString().Trim();
+                string addressLine2 = row.Cells["address2"].Value?.ToString().Trim();
+                string phone = row.Cells["phone"].Value?.ToString().Trim();
+                string postalCode = row.Cells["postalCode"].Value?.ToString().Trim();  // Optional validation for postal code
+                string city = row.Cells["city"].Value?.ToString().Trim();
+
+                // Ensure name, address, phone, and city fields are filled out
+                if (string.IsNullOrWhiteSpace(customerName) || string.IsNullOrWhiteSpace(addressLine1) ||
+                    string.IsNullOrWhiteSpace(phone) || string.IsNullOrWhiteSpace(city))
+                {
+                    MessageBox.Show("Customer name, address, phone, and city must be filled out.");
+                    return;
+                }
+
+                if (!cityNames.Contains(city))
+                {
+                    MessageBox.Show($"The city '{city}' does not exist. Please enter a valid city. (Toronto, Oslo, New York, Los Angeles)");
+                    return;
+                }
+
+                // Validate phone number (only digits and dashes allowed)
+                if (!System.Text.RegularExpressions.Regex.IsMatch(phone, @"^[\d-]+$"))
+                {
+                    MessageBox.Show("Phone number can only contain digits and dashes.");
+                    return;
+                }
+
+                // Validate that the city name exists in the database
+                if (!cityNames.Contains(city))
+                {
+                    MessageBox.Show($"The city '{city}' does not exist. Please enter a valid city. (Toronto, Oslo, New York, Los Angeles)");
+                    return;
+                }
+
                 Customer customer = new Customer
                 {
                     CustomerId = (int)row.Cells["customerId"].Value,
-                    CustomerName = row.Cells["customerName"].Value.ToString(),
+                    CustomerName = customerName,
                     Active = true // Assuming active by default
                 };
 
                 Address address = new Address
                 {
                     AddressId = (int)row.Cells["addressId"].Value,
-                    AddressLine1 = row.Cells["address"].Value.ToString(),
-                    AddressLine2 = row.Cells["address2"].Value.ToString(),
-                    PostalCode = row.Cells["postalCode"].Value.ToString(),
-                    Phone = row.Cells["phone"].Value.ToString()
+                    AddressLine1 = addressLine1,
+                    AddressLine2 = addressLine2,
+                    PostalCode = postalCode,
+                    Phone = phone,
+                    CityId = GetCityIdByName(city)
                 };
 
-                DataHandler.UpdateCustomer(customer, address);
+                DataHandler.UpdateCustomer(customer, address, _loginUser);
 
                 // Refresh the grid after update
                 LoadCustomers();
@@ -375,25 +412,31 @@ namespace WorkManagementSystem.Forms
                 MessageBox.Show("Error: Please select a row to update from the database.");
                 return;
             }
-
-            DataGridViewRow row = appointmentGridView.SelectedRows[0];
-            Appointment existingAppointment = new Appointment();
-            existingAppointment.AppointmentId = (int)row.Cells["appointmentId"].Value;
-            existingAppointment.CustomerId = (int)row.Cells["customerId"].Value;
-            existingAppointment.UserId = (int)row.Cells["userId"].Value;
-            existingAppointment.Title = (string)row.Cells["title"].Value;
-            existingAppointment.Description = (string)row.Cells["description"].Value;
-            existingAppointment.Location = (string)row.Cells["location"].Value;
-            existingAppointment.Contact = (string)row.Cells["contact"].Value;
-            existingAppointment.Type = (string)row.Cells["type"].Value;
-            existingAppointment.Url = (string)row.Cells["url"].Value;
-            existingAppointment.Start = (DateTime)row.Cells["start"].Value;
-            existingAppointment.End = (DateTime)row.Cells["end"].Value;
-            existingAppointment.CreateDate = (DateTime)row.Cells["createDate"].Value;
-            existingAppointment.CreatedBy = (string)row.Cells["createdBy"].Value;
-
-            AddOrUpdateAppointment apptForm = new AddOrUpdateAppointment(_loginUser, existingAppointment);
-            apptForm.Show();
+            try
+            {
+                DataGridViewRow row = appointmentGridView.SelectedRows[0];
+                Appointment existingAppointment = new Appointment();
+                existingAppointment.AppointmentId = (int)row.Cells["appointmentId"].Value;
+                existingAppointment.CustomerId = (int)row.Cells["customerId"].Value;
+                existingAppointment.UserId = (int)row.Cells["userId"].Value;
+                existingAppointment.Title = (string)row.Cells["title"].Value;
+                existingAppointment.Description = (string)row.Cells["description"].Value;
+                existingAppointment.Location = (string)row.Cells["location"].Value;
+                existingAppointment.Contact = (string)row.Cells["contact"].Value;
+                existingAppointment.Type = (string)row.Cells["type"].Value;
+                existingAppointment.Url = (string)row.Cells["url"].Value;
+                existingAppointment.Start = (DateTime)row.Cells["start"].Value;
+                existingAppointment.End = (DateTime)row.Cells["end"].Value;
+                existingAppointment.CreateDate = (DateTime)row.Cells["createDate"].Value;
+                existingAppointment.CreatedBy = (string)row.Cells["createdBy"].Value;
+                AddOrUpdateAppointment apptForm = new AddOrUpdateAppointment(_loginUser, existingAppointment);
+                apptForm.Show();
+            }
+            catch (Exception edx)
+            {
+                MessageBox.Show($"Error: {edx.ToString()}");
+            }            
+            
         }
 
         private DateTime ConvertUtcToLocal(DateTime utcDateTime)

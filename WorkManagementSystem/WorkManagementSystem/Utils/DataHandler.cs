@@ -9,6 +9,7 @@ using Microsoft.Extensions.Configuration;
 using System.Data;
 using WorkManagementSystem.Models;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
+using Microsoft.VisualBasic.ApplicationServices;
 
 
 namespace WorkManagementSystem.Utils
@@ -360,7 +361,7 @@ namespace WorkManagementSystem.Utils
             }
         }
 
-        public void UpdateCustomer(Customer customer, Address address)
+        public void UpdateCustomer(Customer customer, Address address, LoginUser user)
         {
             using (var conn = new MySqlConnection(connectionString))
             {
@@ -370,7 +371,7 @@ namespace WorkManagementSystem.Utils
 
                     // Update Address
                     string updateAddressQuery = @"UPDATE address 
-                                          SET address = @address, address2 = @address2, postalCode = @postalCode, phone = @phone 
+                                          SET address = @address, address2 = @address2, postalCode = @postalCode, phone = @phone, cityId = @cityId
                                           WHERE addressId = @addressId";
                     MySqlCommand cmdAddress = new MySqlCommand(updateAddressQuery, conn);
                     cmdAddress.Parameters.AddWithValue("@address", address.AddressLine1);
@@ -378,17 +379,19 @@ namespace WorkManagementSystem.Utils
                     cmdAddress.Parameters.AddWithValue("@postalCode", address.PostalCode);
                     cmdAddress.Parameters.AddWithValue("@phone", address.Phone);
                     cmdAddress.Parameters.AddWithValue("@addressId", address.AddressId);
+                    cmdAddress.Parameters.AddWithValue("@cityId", address.CityId);
                     cmdAddress.ExecuteNonQuery();
 
                     // Update Customer
                     string updateCustomerQuery = @"UPDATE customer 
-                                           SET customerName = @customerName, active = @active, lastUpdate = @lastUpdate
+                                           SET customerName = @customerName, active = @active, lastUpdate = @lastUpdate, lastUpdateBy = @lastUpdateBy
                                            WHERE customerId = @customerId";
                     MySqlCommand cmdCustomer = new MySqlCommand(updateCustomerQuery, conn);
                     cmdCustomer.Parameters.AddWithValue("@customerName", customer.CustomerName);
                     cmdCustomer.Parameters.AddWithValue("@active", customer.Active);
                     cmdCustomer.Parameters.AddWithValue("@customerId", customer.CustomerId);
                     cmdCustomer.Parameters.AddWithValue("@lastUpdate", DateTime.UtcNow);
+                    cmdCustomer.Parameters.AddWithValue("@lastUpdateBy", user.UserName);
                     cmdCustomer.ExecuteNonQuery();
                 }
                 catch (Exception ex)
