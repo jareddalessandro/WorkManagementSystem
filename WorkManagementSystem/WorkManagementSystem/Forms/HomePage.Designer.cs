@@ -42,6 +42,8 @@
             btnResetCalender = new Button();
             btnSelectDate = new Button();
             btnReports = new Button();
+            btnSelectMonth = new Button();
+            comboMonths = new ComboBox();
             ((System.ComponentModel.ISupportInitialize)customerGridView).BeginInit();
             ((System.ComponentModel.ISupportInitialize)appointmentGridView).BeginInit();
             SuspendLayout();
@@ -161,9 +163,9 @@
             // btnResetCalender
             // 
             btnResetCalender.Font = new Font("Segoe UI", 11F);
-            btnResetCalender.Location = new Point(780, 423);
+            btnResetCalender.Location = new Point(780, 475);
             btnResetCalender.Name = "btnResetCalender";
-            btnResetCalender.Size = new Size(108, 36);
+            btnResetCalender.Size = new Size(119, 36);
             btnResetCalender.TabIndex = 11;
             btnResetCalender.Text = "Reset/Refresh";
             btnResetCalender.UseVisualStyleBackColor = true;
@@ -172,11 +174,11 @@
             // btnSelectDate
             // 
             btnSelectDate.Font = new Font("Segoe UI", 11F);
-            btnSelectDate.Location = new Point(780, 365);
+            btnSelectDate.Location = new Point(780, 401);
             btnSelectDate.Name = "btnSelectDate";
-            btnSelectDate.Size = new Size(108, 52);
+            btnSelectDate.Size = new Size(119, 39);
             btnSelectDate.TabIndex = 12;
-            btnSelectDate.Text = "Select Date";
+            btnSelectDate.Text = "View By Date";
             btnSelectDate.UseVisualStyleBackColor = true;
             btnSelectDate.Click += btnSelectDate_Click;
             // 
@@ -191,11 +193,33 @@
             btnReports.UseVisualStyleBackColor = true;
             btnReports.Click += btnReports_Click;
             // 
+            // btnSelectMonth
+            // 
+            btnSelectMonth.Font = new Font("Segoe UI", 11F);
+            btnSelectMonth.Location = new Point(780, 355);
+            btnSelectMonth.Name = "btnSelectMonth";
+            btnSelectMonth.Size = new Size(119, 39);
+            btnSelectMonth.TabIndex = 14;
+            btnSelectMonth.Text = "View By Month";
+            btnSelectMonth.UseVisualStyleBackColor = true;
+            btnSelectMonth.Click += btnSelectMonth_Click;
+            // 
+            // comboMonths
+            // 
+            comboMonths.FormattingEnabled = true;
+            comboMonths.Location = new Point(905, 355);
+            comboMonths.Name = "comboMonths";
+            comboMonths.Size = new Size(151, 23);
+            comboMonths.TabIndex = 15;
+            comboMonths.Visible = false;
+            // 
             // HomePage
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1439, 616);
+            Controls.Add(comboMonths);
+            Controls.Add(btnSelectMonth);
             Controls.Add(btnReports);
             Controls.Add(btnSelectDate);
             Controls.Add(btnResetCalender);
@@ -234,5 +258,7 @@
         private Button btnResetCalender;
         private Button btnSelectDate;
         private Button btnReports;
+        private Button btnSelectMonth;
+        private ComboBox comboMonths;
     }
 }

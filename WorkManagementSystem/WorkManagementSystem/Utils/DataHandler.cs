@@ -262,15 +262,23 @@ namespace WorkManagementSystem.Utils
                                 a.title,
                                 a.description,
                                 a.location,
+                                a.type,
+                                a.contact,
+                                a.url,
+                                a.createDate,
+                                a.createdBy,
+                                a.customerId,
+                                a.userId,
                                 c.customerName,
-                                u.userName
-                             FROM 
+                                u.userName,
+                                a.appointmentId
+                            FROM 
                                 appointment a
-                             JOIN 
-                                customer c ON a.customerId = c.customerId
-                             JOIN 
-                                user u ON a.userId = u.userId
-                             WHERE 
+                            JOIN 
+                            customer c ON a.customerId = c.customerId
+                            JOIN 
+                            user u ON a.userId = u.userId
+                            WHERE 
                                 DATE(a.start) = @date";
 
                     MySqlCommand cmd = new MySqlCommand(query, conn);

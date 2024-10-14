@@ -24,7 +24,21 @@ namespace WorkManagementSystem.Forms
             InitializeComponent();
             LoadCustomers();
             LoadAppointments();
+            LoadMonthComboBox();
             _loginUser = user;
+        }
+
+        private void LoadMonthComboBox()
+        {
+            // Adding all the months to the ComboBox
+            comboMonths.Items.AddRange(new string[]
+            {
+        "Select...", "January", "February", "March", "April", "May", "June",
+        "July", "August", "September", "October", "November", "December"
+            });
+
+            // Optionally, set the default selected item to the current month
+            comboMonths.SelectedIndex = DateTime.Now.Month - 1; // Month is 1-based, SelectedIndex is 0-based
         }
 
         private void LoadCustomers()
@@ -137,9 +151,12 @@ namespace WorkManagementSystem.Forms
 
                 appointmentGridView.DataSource = appointmentData;
 
-                // Optionally hide ID fields
+                if (appointmentGridView.Columns["appointmentId"] != null)
+                    appointmentGridView.Columns["appointmentId"].Visible = false;
                 if (appointmentGridView.Columns["customerId"] != null)
                     appointmentGridView.Columns["customerId"].Visible = false;
+                if (appointmentGridView.Columns["userId"] != null)
+                    appointmentGridView.Columns["userId"].Visible = false;
             }
             catch (Exception ex)
             {
@@ -375,6 +392,8 @@ namespace WorkManagementSystem.Forms
         private void btnResetCalender_Click(object sender, EventArgs e)
         {
             LoadAppointments();
+            monthCalendar1.Visible = false;
+            comboMonths.Visible = false;
         }
 
         private void btnDeleteAppointment_Click(object sender, EventArgs e)
@@ -435,8 +454,8 @@ namespace WorkManagementSystem.Forms
             catch (Exception edx)
             {
                 MessageBox.Show($"Error: {edx.ToString()}");
-            }            
-            
+            }
+
         }
 
         private DateTime ConvertUtcToLocal(DateTime utcDateTime)
@@ -451,6 +470,11 @@ namespace WorkManagementSystem.Forms
         {
             Reports reports = new Reports();
             reports.Show();
+        }
+
+        private void btnSelectMonth_Click(object sender, EventArgs e)
+        {
+            comboMonths.Visible = true;
         }
     }
 }
