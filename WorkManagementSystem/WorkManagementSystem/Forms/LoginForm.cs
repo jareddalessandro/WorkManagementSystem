@@ -108,7 +108,7 @@ namespace WorkManagementSystem
             // Define the file path for the log (placing it in the root directory)
             string filePath = @"..\..\..\Login_History.txt";
 
-            string timestamp = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss");
+            string timestamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
             
             string logEntry = $"User: {username}, Login Time: {timestamp}";
 
