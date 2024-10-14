@@ -19,6 +19,9 @@ namespace WorkManagementSystem.Forms
     {
         DataHandler DataHandler = new DataHandler();
         LoginUser _loginUser;
+        DateTime searchDate;
+        int searchMonth;
+        string searchType = "None";
         public HomePage(LoginUser user)
         {
             InitializeComponent();
@@ -38,7 +41,7 @@ namespace WorkManagementSystem.Forms
             });
 
             // Optionally, set the default selected item to the current month
-            comboMonths.SelectedIndex = DateTime.Now.Month - 1; // Month is 1-based, SelectedIndex is 0-based
+            comboMonths.SelectedIndex = DateTime.Now.Month; 
         }
 
         private void LoadCustomers()
@@ -138,6 +141,50 @@ namespace WorkManagementSystem.Forms
                 if (appointmentData == null || appointmentData.Rows.Count == 0)
                 {
                     MessageBox.Show("No appointments available for this date.");
+                    return;
+                }
+
+                foreach (DataRow row in appointmentData.Rows)
+                {
+                    // Convert the start and end times from UTC to local time
+                    row["start"] = ConvertUtcToLocal((DateTime)row["start"]);
+                    row["end"] = ConvertUtcToLocal((DateTime)row["end"]);
+                    row["createDate"] = ConvertUtcToLocal((DateTime)row["createDate"]);
+                }
+
+                appointmentGridView.DataSource = appointmentData;
+
+                if (appointmentGridView.Columns["appointmentId"] != null)
+                    appointmentGridView.Columns["appointmentId"].Visible = false;
+                if (appointmentGridView.Columns["customerId"] != null)
+                    appointmentGridView.Columns["customerId"].Visible = false;
+                if (appointmentGridView.Columns["userId"] != null)
+                    appointmentGridView.Columns["userId"].Visible = false;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error loading appointments: " + ex.Message);
+            }
+        }
+
+        private void LoadAppointmentsByMonth(int month)
+        {
+            try
+            {
+                if (appointmentGridView == null)
+                {
+                    MessageBox.Show("Error: appointmentGridView is not initialized.");
+                    return;
+                }
+
+                appointmentGridView.Columns.Clear();
+
+                // Call the DataHandler to get appointments for the selected date
+                DataTable appointmentData = DataHandler.getAppointmentsByMonth(month);
+
+                if (appointmentData == null || appointmentData.Rows.Count == 0)
+                {
+                    MessageBox.Show("No appointments available for this month.");
                     return;
                 }
 
@@ -379,14 +426,8 @@ namespace WorkManagementSystem.Forms
 
         private void monthCalendar1_DateChanged(object sender, DateRangeEventArgs e)
         {
-            DateTime selectedDate = e.Start;  // Get the selected date from the calendar
-            LoadAppointmentsForDate(selectedDate);
-            monthCalendar1.Visible = false;
-        }
-
-        private void btnSelectDate_Click(object sender, EventArgs e)
-        {
-            monthCalendar1.Visible = true;
+            searchDate = e.Start;  // Get the selected date from the calendar
+            searchType = "Date";
         }
 
         private void btnResetCalender_Click(object sender, EventArgs e)
@@ -394,6 +435,7 @@ namespace WorkManagementSystem.Forms
             LoadAppointments();
             monthCalendar1.Visible = false;
             comboMonths.Visible = false;
+            searchType = "None";
         }
 
         private void btnDeleteAppointment_Click(object sender, EventArgs e)
@@ -472,10 +514,50 @@ namespace WorkManagementSystem.Forms
             reports.Show();
         }
 
+        private void btnSelectDate_Click(object sender, EventArgs e)
+        {
+            monthCalendar1.Visible = true;
+            comboMonths.Visible = false;
+            searchType = "Date";
+
+        }
+
         private void btnSelectMonth_Click(object sender, EventArgs e)
         {
             comboMonths.Visible = true;
+            monthCalendar1.Visible = false;
+            searchType = "Month";
         }
+
+        private void comboMonths_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            searchMonth = comboMonths.SelectedIndex;
+        }
+
+        private void btnSearchAppointments_Click(object sender, EventArgs e)
+        {
+
+            switch (searchType)
+            {
+                case "None": {
+                        MessageBox.Show("Error: Please select either a Month or Date to search by.");
+                        break;
+                    }
+                case "Date": {
+                        LoadAppointmentsForDate(searchDate);
+                        monthCalendar1.Visible = false;
+                        break;
+                    }
+                case "Month":
+                    {
+                        LoadAppointmentsByMonth(searchMonth);
+                        comboMonths.Visible = false;
+                        break;
+                    }
+            }
+        }
+
+        
     }
 }
 

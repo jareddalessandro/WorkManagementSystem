@@ -10,6 +10,7 @@ using System.Data;
 using WorkManagementSystem.Models;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
 using Microsoft.VisualBasic.ApplicationServices;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 
 namespace WorkManagementSystem.Utils
@@ -283,6 +284,59 @@ namespace WorkManagementSystem.Utils
 
                     MySqlCommand cmd = new MySqlCommand(query, conn);
                     cmd.Parameters.AddWithValue("@date", date.ToString("yyyy-MM-dd"));  // Use the selected date in the query
+
+                    MySqlDataAdapter adapter = new MySqlDataAdapter(cmd);
+                    adapter.Fill(dt);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error: " + ex.Message);
+                }
+                finally
+                {
+                    conn.Close();
+                }
+
+                return dt;
+            }
+        }
+
+        public DataTable getAppointmentsByMonth(int month)
+        {
+            DataTable dt = new DataTable();
+            using (var conn = new MySqlConnection(connectionString))
+            {
+                try
+                {
+                    conn.Open();
+
+                    // Query to get appointments for a specific date (assuming 'start' and 'end' are UTC)
+                    string query = @$"SELECT 
+                                a.start,
+                                a.end,
+                                a.title,
+                                a.description,
+                                a.location,
+                                a.type,
+                                a.contact,
+                                a.url,
+                                a.createDate,
+                                a.createdBy,
+                                a.customerId,
+                                a.userId,
+                                c.customerName,
+                                u.userName,
+                                a.appointmentId
+                            FROM 
+                                client_schedule.appointment a
+                            JOIN 
+                            customer c ON a.customerId = c.customerId
+                            JOIN 
+                            user u ON a.userId = u.userId
+                            WHERE 
+                                MONTH(a.start) = '{month}' AND YEAR(a.start) = '{DateTime.Now.Year}'";
+
+                    MySqlCommand cmd = new MySqlCommand(query, conn);
 
                     MySqlDataAdapter adapter = new MySqlDataAdapter(cmd);
                     adapter.Fill(dt);
